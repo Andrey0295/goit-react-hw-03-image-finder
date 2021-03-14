@@ -5,6 +5,9 @@ import Container from './Components/Container/Container';
 import SearchBar from './Components/SearchBar/SearchBar';
 import ImageGallery from './Components/ImageGallery/ImageGallery';
 import Button from './Components/Button/Button';
+import LoaderBlock from './Components/LoaderBlock/LoaderBlock';
+
+import styles from './App.module.css';
 
 const API_KEY = '19312346-1618d264863fa21be7207d71c';
 
@@ -19,7 +22,8 @@ class App extends Component {
   componentDidMount() {}
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchQuery !== this.state.searchQuery) {
+    const { searchQuery } = this.state;
+    if (prevState.searchQuery !== searchQuery) {
       this.fetchImages();
     }
     setTimeout(() => {
@@ -35,10 +39,12 @@ class App extends Component {
   };
 
   fetchImages = () => {
+    const { searchQuery, currentPage } = this.state;
+
     this.setState({ isLoading: true });
     axios
       .get(
-        `https://pixabay.com/api/?q=${this.state.searchQuery}&page=${this.state.currentPage}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=5`,
+        `https://pixabay.com/api/?q=${searchQuery}&page=${currentPage}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`,
       )
       .then(res => {
         this.setState(prevState => ({
@@ -50,18 +56,21 @@ class App extends Component {
   };
 
   render() {
+    const { images, isLoading } = this.state;
     return (
-      <Container>
-        <div className="App">
-          <SearchBar onSubmit={this.onChangeQuery} />
+      <>
+        <SearchBar onSubmit={this.onChangeQuery} />
+        <Container>
+          <div className={styles.App}>
+            <ImageGallery imagesData={images} />
 
-          <ImageGallery imagesData={this.state.images} />
-          {this.state.isLoading && <h1>Loading...</h1>}
-          {this.state.images.length > 0 && !this.state.isLoading && (
-            <Button getMoreImages={this.fetchImages} />
-          )}
-        </div>
-      </Container>
+            {isLoading && <LoaderBlock />}
+            {images.length > 0 && !isLoading && (
+              <Button getMoreImages={this.fetchImages} />
+            )}
+          </div>
+        </Container>
+      </>
     );
   }
 }

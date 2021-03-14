@@ -1,9 +1,11 @@
 import React from 'react';
 
+import styles from './ImageGalleryItem.module.css';
+
 const ImageGalleryItem = ({ imageUrl }) => {
   return (
-    <li>
-      <img src={imageUrl} alt="" className="ImageGalleryItem-image" />
+    <li className={styles.ImageGalleryItem}>
+      <img src={imageUrl} alt="" className={styles.ImageGalleryItemImage} />
     </li>
   );
 };

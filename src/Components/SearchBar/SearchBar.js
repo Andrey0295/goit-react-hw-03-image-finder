@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 
+import styles from './SearchBar.module.css';
+
 class SearchBar extends Component {
   state = {
     query: '',
@@ -9,34 +11,39 @@ class SearchBar extends Component {
   searchInputId = shortid.generate();
 
   handleSearchInputChange = e => {
+    const { value } = e.currentTarget;
     this.setState({
-      query: e.currentTarget.value,
+      query: value,
     });
   };
 
   handleSubmit = e => {
+    const { onSubmit } = this.props;
+    const { query } = this.state;
     e.preventDefault();
 
-    this.props.onSubmit(this.state.query);
+    onSubmit(query);
 
     this.setState({ query: '' });
   };
 
   render() {
+    const { query } = this.state;
     return (
-      <header>
-        <form onSubmit={this.handleSubmit}>
+      <header className={styles.Searchbar}>
+        <form className={styles.SearchForm} onSubmit={this.handleSubmit}>
           <label htmlFor={this.searchInputId}></label>
           <input
+            className={styles.SearchFormInput}
             type="text"
-            value={this.state.query}
+            value={query}
             onChange={this.handleSearchInputChange}
             id={this.searchInputId}
             placeholder="Search images and photos"
             autoFocus
           />
-          <button type="submit">
-            <span className="SearchForm-button-label">Search</span>
+          <button className={styles.SearchFormButton} type="submit">
+            <span className={styles.SearchFormButtonLabel}>Search</span>
           </button>
         </form>
       </header>
